@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  View, Text, ScrollView, KeyboardAvoidingView, Platform, Pressable, Share, StyleSheet,
+  View, Text, TextInput, ScrollView, KeyboardAvoidingView, Platform, Pressable, Share, StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -18,6 +18,7 @@ export default function CreateLinkScreen({ navigation }) {
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
+  const [amountFocused, setAmountFocused] = useState(false);
 
   const onAmountChange = (text) => setAmount(text.replace(/[^0-9]/g, ""));
 
@@ -83,41 +84,54 @@ export default function CreateLinkScreen({ navigation }) {
           showsVerticalScrollIndicator={false}
         >
           {!result ? (
-            <View style={styles.card}>
-              <Input
-                label="Customer name"
-                placeholder="e.g. Rohan Mehta"
-                autoCapitalize="words"
-                value={customer}
-                onChangeText={setCustomer}
-              />
-              <Input
-                label="Amount (₹)"
-                placeholder="e.g. 1500"
-                keyboardType="numeric"
-                maxLength={8}
-                value={amount}
-                onChangeText={onAmountChange}
-              />
-              <Input
-                label="Description"
-                placeholder="What is this payment for?"
-                autoCapitalize="sentences"
-                maxLength={80}
-                value={description}
-                onChangeText={setDescription}
-              />
+            <>
+              <View style={styles.amountCard}>
+                <Text style={styles.amountLabel}>Amount to collect</Text>
+                <View style={[styles.amountRow, amountFocused && styles.amountRowFocused]}>
+                  <Text style={styles.rupee}>₹</Text>
+                  <TextInput
+                    style={styles.amountInput}
+                    placeholder="0"
+                    placeholderTextColor="#B8C0CE"
+                    keyboardType="numeric"
+                    maxLength={8}
+                    value={amount}
+                    onChangeText={onAmountChange}
+                    onFocus={() => setAmountFocused(true)}
+                    onBlur={() => setAmountFocused(false)}
+                  />
+                </View>
+                {error ? <Text style={styles.error}>{error}</Text> : null}
+              </View>
 
-              {error ? <Text style={styles.error}>{error}</Text> : null}
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>Customer details</Text>
+                <Input
+                  label="Customer name (optional)"
+                  placeholder="e.g. Rohan Mehta"
+                  autoCapitalize="words"
+                  value={customer}
+                  onChangeText={setCustomer}
+                />
+                <Input
+                  label="Description"
+                  placeholder="What is this payment for?"
+                  autoCapitalize="sentences"
+                  maxLength={80}
+                  value={description}
+                  onChangeText={setDescription}
+                />
+              </View>
 
               <Button title="Generate Payment Link" onPress={generate} />
-            </View>
+            </>
           ) : (
             <View style={styles.card}>
               <View style={styles.successIcon}>
                 <Ionicons name="checkmark" size={30} color={colors.success} />
               </View>
-              <Text style={styles.successTitle}>Link generated</Text>
+              <Text style={styles.successTitle}>Payment link created</Text>
+              <Text style={styles.successAmount}>₹{result.amount}</Text>
               <Text style={styles.successSub}>
                 Saved to your Payment Links tab. This is a sample link until the backend is connected.
               </Text>
@@ -126,10 +140,11 @@ export default function CreateLinkScreen({ navigation }) {
                 <Row label="Customer" value={result.customer} />
                 <Row label="Amount" value={`₹${result.amount}`} />
                 {result.description ? <Row label="For" value={result.description} /> : null}
+                <Row label="Status" value="Active" />
               </View>
 
               <View style={styles.urlBox}>
-                <Ionicons name="link" size={16} color={colors.brand} />
+                <Ionicons name="link-outline" size={16} color={colors.brand} />
                 <Text style={styles.url} numberOfLines={1}>{result.url}</Text>
               </View>
 
@@ -160,35 +175,44 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", justifyContent: "space-between",
     paddingHorizontal: 20, paddingTop: 12, paddingBottom: 16,
   },
-  back: {
-    width: 44, height: 44, borderRadius: 14, alignItems: "center", justifyContent: "center",
-  },
+  back: { width: 42, height: 42, borderRadius: 12, alignItems: "center", justifyContent: "center" },
   headerTitle: { fontSize: 18, fontWeight: "800", color: colors.text, letterSpacing: -0.3 },
-  scroll: { padding: 20, paddingTop: 4, paddingBottom: 32 },
-  card: {
-    backgroundColor: "#fff", borderRadius: 20, padding: 20,
+  scroll: { padding: 20, paddingTop: 4, paddingBottom: 32, gap: 16 },
+  amountCard: {
+    backgroundColor: "#fff", borderRadius: 16, padding: 20,
     borderWidth: 1, borderColor: colors.border,
   },
-  error: { color: colors.danger, fontSize: 13, fontWeight: "600", marginBottom: 12 },
+  amountLabel: { fontSize: 13, fontWeight: "600", color: colors.muted },
+  amountRow: {
+    flexDirection: "row", alignItems: "center", marginTop: 8, paddingBottom: 6,
+    borderBottomWidth: 2, borderBottomColor: colors.border,
+  },
+  amountRowFocused: { borderBottomColor: colors.brand },
+  rupee: { fontSize: 36, fontWeight: "800", color: colors.text, marginRight: 6 },
+  amountInput: { flex: 1, fontSize: 40, fontWeight: "800", color: colors.text, padding: 0, letterSpacing: -1 },
+  error: { color: colors.danger, fontSize: 13, fontWeight: "600", marginTop: 10 },
+  card: {
+    backgroundColor: "#fff", borderRadius: 16, padding: 20,
+    borderWidth: 1, borderColor: colors.border,
+  },
+  cardTitle: { fontSize: 16, fontWeight: "800", color: colors.text, marginBottom: 16 },
   successIcon: {
-    width: 64, height: 64, borderRadius: 32, backgroundColor: colors.successBg,
+    width: 60, height: 60, borderRadius: 30, backgroundColor: colors.successBg,
     alignItems: "center", justifyContent: "center", alignSelf: "center",
   },
-  successTitle: {
-    fontSize: 22, fontWeight: "800", color: colors.text, textAlign: "center", marginTop: 14,
+  successTitle: { fontSize: 18, fontWeight: "700", color: colors.text, textAlign: "center", marginTop: 14 },
+  successAmount: {
+    fontSize: 34, fontWeight: "800", color: colors.text, textAlign: "center",
+    marginTop: 4, letterSpacing: -0.8,
   },
-  successSub: {
-    fontSize: 13.5, color: colors.muted, textAlign: "center", marginTop: 6, lineHeight: 19,
-  },
-  summary: {
-    backgroundColor: colors.bgAlt, borderRadius: 14, padding: 14, marginTop: 20, gap: 10,
-  },
+  successSub: { fontSize: 13.5, color: colors.muted, textAlign: "center", marginTop: 8, lineHeight: 19 },
+  summary: { backgroundColor: colors.bgAlt, borderRadius: 12, padding: 14, marginTop: 20, gap: 10 },
   row: { flexDirection: "row", justifyContent: "space-between", gap: 16 },
   rowLabel: { fontSize: 14, color: colors.muted },
   rowValue: { fontSize: 14, fontWeight: "700", color: colors.text, flexShrink: 1, textAlign: "right" },
   urlBox: {
     flexDirection: "row", alignItems: "center", gap: 8, marginTop: 14, padding: 14,
-    borderRadius: 12, backgroundColor: "#eef0ff",
+    borderRadius: 12, backgroundColor: colors.tint,
   },
   url: { flex: 1, color: colors.brand, fontWeight: "700", fontSize: 14 },
 });
