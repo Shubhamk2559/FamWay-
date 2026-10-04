@@ -3,7 +3,7 @@ import { View, Text, FlatList, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ScreenHeader from "../components/ScreenHeader";
 import OrderRow from "../components/OrderRow";
-import { colors } from "../theme/colors";
+import { colors, dark } from "../theme/colors";
 import { orders } from "../data/mockData";
 
 const filters = ["all", "paid", "pending", "failed"];
@@ -15,7 +15,7 @@ export default function OrdersScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
-      <ScreenHeader title="Orders" subtitle="Track every payment" />
+      <ScreenHeader title="Transactions" subtitle="Track every payment" />
 
       <View style={styles.chips}>
         {filters.map((f) => {
@@ -49,19 +49,20 @@ export default function OrdersScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bgAlt },
-  chips: { flexDirection: "row", gap: 8, paddingHorizontal: 20, marginBottom: 14 },
+  safe: { flex: 1, backgroundColor: dark.bg },
+  chips: { flexDirection: "row", gap: 8, paddingHorizontal: 20, marginBottom: 16 },
   chip: {
-    flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, paddingVertical: 8,
-    borderRadius: 10, backgroundColor: "#fff", borderWidth: 1, borderColor: colors.border,
+    flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 13, paddingVertical: 8,
+    borderRadius: 999, backgroundColor: dark.surface,
   },
-  chipActive: { backgroundColor: colors.navy, borderColor: colors.navy },
-  chipText: { fontSize: 13.5, fontWeight: "700", color: colors.text },
-  chipCount: { fontSize: 12.5, fontWeight: "600", color: colors.muted },
-  chipTextActive: { color: "#fff" },
+  chipActive: { backgroundColor: "#fff" },
+  chipText: { fontSize: 13.5, fontWeight: "700", color: dark.text },
+  chipCount: { fontSize: 12.5, fontWeight: "600", color: dark.sub },
+  chipTextActive: { color: colors.navy },
   list: {
-    backgroundColor: "#fff", borderTopWidth: 1, borderTopColor: colors.border,
+    flexGrow: 0, marginHorizontal: 20, marginBottom: 16,
+    backgroundColor: "#fff", borderRadius: 18,
   },
   sep: { height: 1, backgroundColor: colors.border, marginLeft: 68 },
-  empty: { textAlign: "center", color: colors.muted, marginTop: 40 },
+  empty: { textAlign: "center", color: colors.muted, padding: 32 },
 });
