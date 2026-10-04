@@ -10,52 +10,56 @@ import Button from "../components/Button";
 import { usePaymentLinks } from "../context/PaymentLinksContext";
 import { colors, dark } from "../theme/colors";
 
-const makeCode = () => Math.random().toString(36).slice(2, 8);
-
 export default function CreateLinkScreen({ navigation }) {
-  const { addLink } = usePaymentLinks();
+  const { createLink } = usePaymentLinks();
   const [customer, setCustomer] = useState("");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const [amountFocused, setAmountFocused] = useState(false);
 
   const onAmountChange = (text) => setAmount(text.replace(/[^0-9]/g, ""));
 
-  const generate = () => {
-    if (!amount || Number(amount) <= 0) {
+  const generate = async () => {
+    if (submitting) return;
+
+    const rupees = Number(amount);
+    if (!amount || rupees < 1) {
       setError("Please enter a valid amount.");
       return;
     }
+    if (rupees > 500000) {
+      setError("Maximum amount is ₹5,00,000.");
+      return;
+    }
+
     setError("");
+    setSubmitting(true);
+    try {
+      const customerName = customer.trim();
+      const desc = description.trim();
+      const link = await createLink({ amount: rupees, description: desc, customerName });
 
-    const code = makeCode();
-    const formattedAmount = Number(amount).toLocaleString("en-IN");
-    const customerName = customer.trim();
-    const desc = description.trim();
-
-    addLink({
-      id: `${Date.now()}`,
-      title: desc || customerName || "Payment Link",
-      amount: `₹${formattedAmount}`,
-      slug: `famway.app/pay/${code}`,
-      status: "active",
-      payments: 0,
-    });
-
-    setResult({
-      url: `https://famway.app/pay/${code}`,
-      customer: customerName || "Any customer",
-      amount: formattedAmount,
-      description: desc,
-    });
+      setResult({
+        url: link.url,
+        customer: customerName || "Any customer",
+        amount: rupees.toLocaleString("en-IN"),
+        description: desc,
+      });
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const reset = () => {
     setCustomer("");
     setAmount("");
     setDescription("");
+    setError("");
     setResult(null);
   };
 
@@ -102,6 +106,7 @@ export default function CreateLinkScreen({ navigation }) {
                     onFocus={() => setAmountFocused(true)}
                     onBlur={() => setAmountFocused(false)}
                     selectionColor={dark.accentText}
+                    editable={!submitting}
                   />
                 </View>
                 {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -115,6 +120,7 @@ export default function CreateLinkScreen({ navigation }) {
                   autoCapitalize="words"
                   value={customer}
                   onChangeText={setCustomer}
+                  editable={!submitting}
                 />
                 <Input
                   label="Description"
@@ -123,10 +129,11 @@ export default function CreateLinkScreen({ navigation }) {
                   maxLength={80}
                   value={description}
                   onChangeText={setDescription}
+                  editable={!submitting}
                 />
               </View>
 
-              <Button title="Generate Payment Link" onPress={generate} />
+              <Button title="Generate Payment Link" onPress={generate} loading={submitting} />
             </>
           ) : (
             <View style={styles.card}>
@@ -136,7 +143,7 @@ export default function CreateLinkScreen({ navigation }) {
               <Text style={styles.successTitle}>Payment link created</Text>
               <Text style={styles.successAmount}>₹{result.amount}</Text>
               <Text style={styles.successSub}>
-                Saved to your Payment Links tab. This is a sample link until the backend is connected.
+                Saved to your account. You can find it in the Payment Links tab.
               </Text>
 
               <View style={styles.summary}>
@@ -197,7 +204,9 @@ const styles = StyleSheet.create({
   amountInput: {
     minWidth: 90, fontSize: 52, fontWeight: "800", color: dark.text, padding: 0, letterSpacing: -1,
   },
-  error: { color: dark.error, fontSize: 13, fontWeight: "600", marginTop: 12 },
+  error: {
+    color: dark.error, fontSize: 13, fontWeight: "600", marginTop: 12, textAlign: "center",
+  },
   card: { backgroundColor: "#fff", borderRadius: 18, padding: 20 },
   cardTitle: { fontSize: 16, fontWeight: "800", color: colors.text, marginBottom: 16 },
   successIcon: {
