@@ -3,11 +3,12 @@ import {
   View, Text, TextInput, ScrollView, KeyboardAvoidingView, Platform, Pressable, Share, StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { usePaymentLinks } from "../context/PaymentLinksContext";
-import { colors } from "../theme/colors";
+import { colors, dark } from "../theme/colors";
 
 const makeCode = () => Math.random().toString(36).slice(2, 8);
 
@@ -66,12 +67,13 @@ export default function CreateLinkScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safe}>
+      <StatusBar style="light" />
       <View style={styles.header}>
         <Pressable onPress={() => navigation.goBack()} style={styles.back} hitSlop={8}>
-          <Ionicons name="chevron-back" size={22} color={colors.text} />
+          <Ionicons name="chevron-back" size={22} color={dark.text} />
         </Pressable>
         <Text style={styles.headerTitle}>Create Payment Link</Text>
-        <View style={styles.back} />
+        <View style={styles.backSpacer} />
       </View>
 
       <KeyboardAvoidingView
@@ -85,20 +87,21 @@ export default function CreateLinkScreen({ navigation }) {
         >
           {!result ? (
             <>
-              <View style={styles.amountCard}>
-                <Text style={styles.amountLabel}>Amount to collect</Text>
+              <View style={styles.amountWrap}>
+                <Text style={styles.amountLabel}>Enter amount</Text>
                 <View style={[styles.amountRow, amountFocused && styles.amountRowFocused]}>
                   <Text style={styles.rupee}>₹</Text>
                   <TextInput
                     style={styles.amountInput}
                     placeholder="0"
-                    placeholderTextColor="#B8C0CE"
+                    placeholderTextColor="#4A5C80"
                     keyboardType="numeric"
                     maxLength={8}
                     value={amount}
                     onChangeText={onAmountChange}
                     onFocus={() => setAmountFocused(true)}
                     onBlur={() => setAmountFocused(false)}
+                    selectionColor={dark.accentText}
                   />
                 </View>
                 {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -170,31 +173,32 @@ function Row({ label, value }) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bgAlt },
+  safe: { flex: 1, backgroundColor: dark.bg },
   header: {
     flexDirection: "row", alignItems: "center", justifyContent: "space-between",
     paddingHorizontal: 20, paddingTop: 12, paddingBottom: 16,
   },
-  back: { width: 42, height: 42, borderRadius: 12, alignItems: "center", justifyContent: "center" },
-  headerTitle: { fontSize: 18, fontWeight: "800", color: colors.text, letterSpacing: -0.3 },
-  scroll: { padding: 20, paddingTop: 4, paddingBottom: 32, gap: 16 },
-  amountCard: {
-    backgroundColor: "#fff", borderRadius: 16, padding: 20,
-    borderWidth: 1, borderColor: colors.border,
+  back: {
+    width: 42, height: 42, borderRadius: 14, backgroundColor: dark.surface,
+    alignItems: "center", justifyContent: "center",
   },
-  amountLabel: { fontSize: 13, fontWeight: "600", color: colors.muted },
+  backSpacer: { width: 42, height: 42 },
+  headerTitle: { fontSize: 18, fontWeight: "800", color: dark.text, letterSpacing: -0.3 },
+  scroll: { padding: 20, paddingTop: 4, paddingBottom: 32, gap: 18 },
+  amountWrap: { alignItems: "center", paddingVertical: 18 },
+  amountLabel: { fontSize: 14, fontWeight: "600", color: dark.sub },
   amountRow: {
-    flexDirection: "row", alignItems: "center", marginTop: 8, paddingBottom: 6,
-    borderBottomWidth: 2, borderBottomColor: colors.border,
+    flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 12,
+    paddingBottom: 8, paddingHorizontal: 12, borderBottomWidth: 2, borderBottomColor: dark.line,
+    minWidth: 180,
   },
-  amountRowFocused: { borderBottomColor: colors.brand },
-  rupee: { fontSize: 36, fontWeight: "800", color: colors.text, marginRight: 6 },
-  amountInput: { flex: 1, fontSize: 40, fontWeight: "800", color: colors.text, padding: 0, letterSpacing: -1 },
-  error: { color: colors.danger, fontSize: 13, fontWeight: "600", marginTop: 10 },
-  card: {
-    backgroundColor: "#fff", borderRadius: 16, padding: 20,
-    borderWidth: 1, borderColor: colors.border,
+  amountRowFocused: { borderBottomColor: dark.accent },
+  rupee: { fontSize: 38, fontWeight: "800", color: dark.sub, marginRight: 6 },
+  amountInput: {
+    minWidth: 90, fontSize: 52, fontWeight: "800", color: dark.text, padding: 0, letterSpacing: -1,
   },
+  error: { color: dark.error, fontSize: 13, fontWeight: "600", marginTop: 12 },
+  card: { backgroundColor: "#fff", borderRadius: 18, padding: 20 },
   cardTitle: { fontSize: 16, fontWeight: "800", color: colors.text, marginBottom: 16 },
   successIcon: {
     width: 60, height: 60, borderRadius: 30, backgroundColor: colors.successBg,
