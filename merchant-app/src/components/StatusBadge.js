@@ -13,12 +13,17 @@ export default function StatusBadge({ status }) {
   const s = map[status] || map.pending;
   return (
     <View style={[styles.badge, { backgroundColor: s.bg }]}>
+      <View style={[styles.dot, { backgroundColor: s.fg }]} />
       <Text style={[styles.text, { color: s.fg }]}>{s.label}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, alignSelf: "flex-start" },
+  badge: {
+    flexDirection: "row", alignItems: "center", gap: 5, alignSelf: "flex-start",
+    paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6,
+  },
+  dot: { width: 6, height: 6, borderRadius: 3 },
   text: { fontSize: 12, fontWeight: "700" },
 });
