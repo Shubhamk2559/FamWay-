@@ -39,7 +39,7 @@ export default function LoginScreen({ navigation }) {
               <Text style={styles.link}>Forgot password?</Text>
             </Pressable>
 
-            <Button title="Login" onPress={() => {}} />
+            <Button title="Login" onPress={() => navigation.replace("Main")} />
           </View>
 
           <View style={styles.bottom}>
