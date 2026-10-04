@@ -3,8 +3,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import ScreenHeader from "../components/ScreenHeader";
 import StatusBadge from "../components/StatusBadge";
+import { usePaymentLinks } from "../context/PaymentLinksContext";
 import { colors } from "../theme/colors";
-import { links } from "../data/mockData";
 
 function LinkCard({ item }) {
   return (
@@ -41,14 +41,16 @@ function LinkCard({ item }) {
   );
 }
 
-export default function PaymentLinksScreen() {
+export default function PaymentLinksScreen({ navigation }) {
+  const { links } = usePaymentLinks();
+
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
       <ScreenHeader
         title="Payment Links"
         subtitle={`${links.length} links created`}
         actionIcon="add"
-        onAction={() => {}}
+        onAction={() => navigation.navigate("CreateLink")}
       />
       <FlatList
         data={links}
