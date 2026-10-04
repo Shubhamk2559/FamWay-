@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Pressable, StyleSheet } from "react-native";
+import { View, Text, FlatList, Pressable, ActivityIndicator, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import ScreenHeader from "../components/ScreenHeader";
@@ -42,23 +42,63 @@ function LinkCard({ item }) {
 }
 
 export default function PaymentLinksScreen({ navigation }) {
-  const { links } = usePaymentLinks();
+  const { links, loading, error, refresh } = usePaymentLinks();
+  const firstLoad = loading && links.length === 0;
 
-  return (
-    <SafeAreaView style={styles.safe} edges={["top"]}>
-      <ScreenHeader
-        title="Payment Links"
-        subtitle={`${links.length} links created`}
-        actionIcon="add"
-        onAction={() => navigation.navigate("CreateLink")}
-      />
+  const subtitle = firstLoad ? "Loading..." : `${links.length} links created`;
+
+  let body;
+  if (firstLoad) {
+    body = (
+      <View style={styles.center}>
+        <ActivityIndicator color={dark.accentText} size="large" />
+        <Text style={styles.centerText}>Loading your links...</Text>
+      </View>
+    );
+  } else if (error && links.length === 0) {
+    body = (
+      <View style={styles.center}>
+        <Ionicons name="cloud-offline-outline" size={36} color={dark.sub} />
+        <Text style={styles.centerTitle}>Could not load links</Text>
+        <Text style={styles.centerText}>{error}</Text>
+        <Pressable style={styles.retry} onPress={() => refresh()}>
+          <Text style={styles.retryText}>Try again</Text>
+        </Pressable>
+      </View>
+    );
+  } else {
+    body = (
       <FlatList
         data={links}
         keyExtractor={(i) => i.id}
         renderItem={({ item }) => <LinkCard item={item} />}
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 24, gap: 12 }}
         showsVerticalScrollIndicator={false}
+        refreshing={loading}
+        onRefresh={() => refresh({ silent: true })}
+        ListHeaderComponent={
+          error ? <Text style={styles.banner}>Could not refresh: {error}</Text> : null
+        }
+        ListEmptyComponent={
+          <View style={styles.center}>
+            <Ionicons name="link-outline" size={36} color={dark.sub} />
+            <Text style={styles.centerTitle}>No payment links yet</Text>
+            <Text style={styles.centerText}>Tap + to create your first link.</Text>
+          </View>
+        }
       />
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.safe} edges={["top"]}>
+      <ScreenHeader
+        title="Payment Links"
+        subtitle={subtitle}
+        actionIcon="add"
+        onAction={() => navigation.navigate("CreateLink")}
+      />
+      {body}
     </SafeAreaView>
   );
 }
@@ -86,4 +126,15 @@ const styles = StyleSheet.create({
   },
   smallFilled: { backgroundColor: colors.brand },
   smallText: { color: colors.brand, fontWeight: "700", fontSize: 13.5 },
+  center: { alignItems: "center", paddingHorizontal: 32, paddingTop: 60, gap: 8 },
+  centerTitle: { fontSize: 17, fontWeight: "800", color: dark.text, marginTop: 6 },
+  centerText: { fontSize: 14, color: dark.sub, textAlign: "center", lineHeight: 20 },
+  retry: {
+    marginTop: 12, paddingHorizontal: 22, paddingVertical: 11,
+    borderRadius: 12, backgroundColor: dark.accent,
+  },
+  retryText: { color: "#fff", fontWeight: "700", fontSize: 14.5 },
+  banner: {
+    color: dark.error, fontSize: 13, fontWeight: "600", marginBottom: 4,
+  },
 });
