@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../theme/colors";
+import { colors, dark } from "../theme/colors";
 import { merchant } from "../data/mockData";
 
 const sections = [
@@ -13,11 +13,11 @@ const sections = [
     ],
   },
   {
-    title: "Account",
+    title: "Security & settings",
     items: [
       { icon: "storefront-outline", label: "Business details" },
-      { icon: "notifications-outline", label: "Notifications" },
       { icon: "shield-checkmark-outline", label: "Security" },
+      { icon: "notifications-outline", label: "Notifications" },
     ],
   },
   {
@@ -40,7 +40,7 @@ export default function ProfileScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Profile</Text>
+        <Text style={styles.title}>Account</Text>
 
         <View style={styles.head}>
           <View style={styles.avatar}>
@@ -50,13 +50,13 @@ export default function ProfileScreen({ navigation }) {
             <Text style={styles.biz} numberOfLines={1}>{merchant.businessName}</Text>
             <Text style={styles.sub} numberOfLines={1}>{merchant.email}</Text>
             <View style={styles.verified}>
-              <Ionicons name="checkmark-circle" size={14} color={colors.success} />
+              <Ionicons name="checkmark-circle" size={14} color="#4ADE80" />
               <Text style={styles.verifiedText}>UPI linked</Text>
             </View>
           </View>
         </View>
 
-        <Text style={styles.sectionTitle}>Business information</Text>
+        <Text style={styles.sectionTitle}>Merchant details</Text>
         <View style={styles.group}>
           {info.map((r, i) => (
             <View key={r.label} style={[styles.infoRow, i < info.length - 1 && styles.divider]}>
@@ -92,7 +92,7 @@ export default function ProfileScreen({ navigation }) {
         ))}
 
         <Pressable style={styles.logout} onPress={logout}>
-          <Ionicons name="log-out-outline" size={20} color={colors.danger} />
+          <Ionicons name="log-out-outline" size={20} color={dark.error} />
           <Text style={styles.logoutText}>Log out</Text>
         </Pressable>
 
@@ -103,34 +103,31 @@ export default function ProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bgAlt },
+  safe: { flex: 1, backgroundColor: dark.bg },
   scroll: { padding: 20, paddingBottom: 32 },
-  title: { fontSize: 24, fontWeight: "800", color: colors.text, letterSpacing: -0.4, marginBottom: 16 },
+  title: { fontSize: 24, fontWeight: "800", color: dark.text, letterSpacing: -0.4, marginBottom: 16 },
   head: {
-    flexDirection: "row", alignItems: "center", gap: 14, backgroundColor: "#fff",
-    borderRadius: 16, padding: 18, borderWidth: 1, borderColor: colors.border,
+    flexDirection: "row", alignItems: "center", gap: 14, backgroundColor: dark.surface,
+    borderRadius: 20, padding: 18,
   },
   avatar: {
-    width: 60, height: 60, borderRadius: 30, backgroundColor: colors.navy,
+    width: 62, height: 62, borderRadius: 31, backgroundColor: dark.accent,
     alignItems: "center", justifyContent: "center",
   },
   avatarText: { color: "#fff", fontSize: 26, fontWeight: "800" },
-  biz: { fontSize: 18, fontWeight: "800", color: colors.text },
-  sub: { fontSize: 13.5, color: colors.muted, marginTop: 2 },
+  biz: { fontSize: 18, fontWeight: "800", color: dark.text },
+  sub: { fontSize: 13.5, color: dark.sub, marginTop: 2 },
   verified: {
     flexDirection: "row", alignItems: "center", gap: 5, alignSelf: "flex-start",
     marginTop: 8, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6,
-    backgroundColor: colors.successBg,
+    backgroundColor: "rgba(74,222,128,0.14)",
   },
-  verifiedText: { color: colors.success, fontWeight: "700", fontSize: 12 },
+  verifiedText: { color: "#4ADE80", fontWeight: "700", fontSize: 12 },
   sectionTitle: {
-    fontSize: 13, fontWeight: "700", color: colors.muted, textTransform: "uppercase",
-    letterSpacing: 0.6, marginTop: 24, marginBottom: 8, marginLeft: 4,
+    fontSize: 12.5, fontWeight: "700", color: dark.sub, textTransform: "uppercase",
+    letterSpacing: 0.7, marginTop: 24, marginBottom: 8, marginLeft: 4,
   },
-  group: {
-    backgroundColor: "#fff", borderRadius: 16, borderWidth: 1, borderColor: colors.border,
-    overflow: "hidden",
-  },
+  group: { backgroundColor: "#fff", borderRadius: 18, overflow: "hidden" },
   divider: { borderBottomWidth: 1, borderBottomColor: colors.border },
   infoRow: {
     flexDirection: "row", justifyContent: "space-between", alignItems: "center",
@@ -147,9 +144,9 @@ const styles = StyleSheet.create({
   note: { backgroundColor: colors.warningBg, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },
   noteText: { color: colors.warning, fontSize: 11.5, fontWeight: "700" },
   logout: {
-    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 24,
-    height: 50, borderRadius: 12, backgroundColor: "#fff", borderWidth: 1, borderColor: "#F1C9C6",
+    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 26,
+    height: 50, borderRadius: 14, backgroundColor: dark.surface,
   },
-  logoutText: { color: colors.danger, fontWeight: "700", fontSize: 15.5 },
-  version: { textAlign: "center", color: colors.muted, fontSize: 12, marginTop: 18 },
+  logoutText: { color: dark.error, fontWeight: "700", fontSize: 15.5 },
+  version: { textAlign: "center", color: dark.sub, fontSize: 12, marginTop: 18 },
 });
