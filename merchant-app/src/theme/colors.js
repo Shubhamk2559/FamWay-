@@ -18,6 +18,21 @@ export const colors = {
   tint: "#EAF0FF",
 };
 
+// Dark wallet theme used by the main app screens
+export const dark = {
+  bg: "#081226",
+  surface: "#10203F",
+  surface2: "#17294D",
+  tabBar: "#0C1832",
+  line: "rgba(255,255,255,0.08)",
+  text: "#FFFFFF",
+  sub: "#9FB0CF",
+  accent: "#4C63F0",
+  accentSoft: "rgba(76,99,240,0.2)",
+  accentText: "#8EA0FF",
+  error: "#FF8A80",
+};
+
 export const shadow = {
   shadowColor: "#0B2447",
   shadowOpacity: 0.06,
