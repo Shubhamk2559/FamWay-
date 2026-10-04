@@ -20,10 +20,10 @@ export default function ScreenHeader({ title, subtitle, actionIcon, onAction }) 
 
 const styles = StyleSheet.create({
   wrap: { flexDirection: "row", alignItems: "center", paddingHorizontal: 20, paddingTop: 12, paddingBottom: 16 },
-  title: { fontSize: 26, fontWeight: "800", color: colors.text, letterSpacing: -0.5 },
+  title: { fontSize: 24, fontWeight: "800", color: colors.text, letterSpacing: -0.4 },
   sub: { fontSize: 14, color: colors.muted, marginTop: 2 },
   action: {
-    width: 44, height: 44, borderRadius: 14, backgroundColor: colors.brand,
+    width: 42, height: 42, borderRadius: 12, backgroundColor: colors.brand,
     alignItems: "center", justifyContent: "center",
   },
 });
