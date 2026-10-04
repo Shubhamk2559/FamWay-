@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SplashScreen from "../screens/SplashScreen";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
+import CreateLinkScreen from "../screens/CreateLinkScreen";
 import MainTabs from "./MainTabs";
 
 const Stack = createNativeStackNavigator();
@@ -22,6 +23,7 @@ export default function AppNavigator() {
           component={MainTabs}
           options={{ animation: "fade", gestureEnabled: false }}
         />
+        <Stack.Screen name="CreateLink" component={CreateLinkScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
