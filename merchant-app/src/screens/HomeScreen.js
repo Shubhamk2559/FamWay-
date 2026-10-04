@@ -8,7 +8,7 @@ import { colors } from "../theme/colors";
 import { merchant, stats, orders } from "../data/mockData";
 
 const actions = [
-  { icon: "add-circle-outline", label: "New Link" },
+  { icon: "add-circle-outline", label: "New Link", screen: "CreateLink" },
   { icon: "qr-code-outline", label: "Show QR" },
   { icon: "share-social-outline", label: "Share" },
   { icon: "download-outline", label: "Reports" },
@@ -46,7 +46,11 @@ export default function HomeScreen({ navigation }) {
 
         <View style={styles.actions}>
           {actions.map((a) => (
-            <Pressable key={a.label} style={styles.action}>
+            <Pressable
+              key={a.label}
+              style={styles.action}
+              onPress={() => a.screen && navigation.navigate(a.screen)}
+            >
               <View style={styles.actionIcon}>
                 <Ionicons name={a.icon} size={22} color={colors.brand} />
               </View>
