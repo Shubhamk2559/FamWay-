@@ -1,40 +1,30 @@
 import { Pressable, Text, ActivityIndicator, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "../theme/colors";
 
 export default function Button({ title, onPress, variant = "primary", loading = false }) {
-  const content = loading ? (
-    <ActivityIndicator color={variant === "primary" ? "#fff" : colors.brand} />
-  ) : (
-    <Text style={[styles.text, variant !== "primary" && { color: colors.brand }]}>{title}</Text>
-  );
-
+  const primary = variant === "primary";
   return (
     <Pressable
       onPress={onPress}
       disabled={loading}
-      style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}
+      style={({ pressed }) => [
+        styles.btn,
+        primary ? styles.primary : styles.outline,
+        pressed && { opacity: 0.88 },
+      ]}
     >
-      {variant === "primary" ? (
-        <LinearGradient
-          colors={[colors.brand, "#6366f1"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.btn}
-        >
-          {content}
-        </LinearGradient>
+      {loading ? (
+        <ActivityIndicator color={primary ? "#fff" : colors.brand} />
       ) : (
-        <Pressable style={[styles.btn, styles.outline]} onPress={onPress}>
-          {content}
-        </Pressable>
+        <Text style={[styles.text, !primary && { color: colors.brand }]}>{title}</Text>
       )}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  btn: { height: 54, borderRadius: 14, alignItems: "center", justifyContent: "center" },
+  btn: { height: 52, borderRadius: 12, alignItems: "center", justifyContent: "center" },
+  primary: { backgroundColor: colors.brand },
   outline: { borderWidth: 1.5, borderColor: colors.border, backgroundColor: "#fff" },
   text: { color: "#fff", fontSize: 16, fontWeight: "700" },
 });
