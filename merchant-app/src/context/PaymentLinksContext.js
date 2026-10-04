@@ -1,16 +1,44 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-import { links as initialLinks } from "../data/mockData";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { fetchPaymentLinks, createPaymentLink } from "../api/paymentLinks";
 
 const PaymentLinksContext = createContext(null);
 
 export function PaymentLinksProvider({ children }) {
-  const [links, setLinks] = useState(initialLinks);
+  const [links, setLinks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const addLink = useCallback((newLink) => {
-    setLinks((prev) => [newLink, ...prev]);
+  const refresh = useCallback(async ({ silent = false } = {}) => {
+    if (!silent) setLoading(true);
+    setError("");
+    try {
+      setLinks(await fetchPaymentLinks());
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const value = useMemo(() => ({ links, addLink }), [links, addLink]);
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  // Throws on failure so the calling screen can show the error.
+  const createLink = useCallback(
+    async (input) => {
+      const link = await createPaymentLink(input);
+      setLinks((prev) => [link, ...prev]);
+      refresh({ silent: true });
+      return link;
+    },
+    [refresh]
+  );
+
+  const value = useMemo(
+    () => ({ links, loading, error, refresh, createLink }),
+    [links, loading, error, refresh, createLink]
+  );
 
   return (
     <PaymentLinksContext.Provider value={value}>
