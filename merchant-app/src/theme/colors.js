@@ -9,4 +9,10 @@ export const colors = {
   bgAlt: "#f5f7fb",
   border: "#e5e9f2",
   danger: "#dc2626",
+  success: "#16a34a",
+  successBg: "#e8f7ee",
+  warning: "#b45309",
+  warningBg: "#fef3c7",
+  dangerBg: "#fee2e2",
+  greyBg: "#eef0f5",
 };
