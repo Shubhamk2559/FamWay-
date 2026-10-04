@@ -1,10 +1,8 @@
 import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-import StatCard from "../components/StatCard";
 import OrderRow from "../components/OrderRow";
-import { colors } from "../theme/colors";
+import { colors, shadow } from "../theme/colors";
 import { merchant, stats, orders } from "../data/mockData";
 
 const actions = [
@@ -15,6 +13,8 @@ const actions = [
 ];
 
 export default function HomeScreen({ navigation }) {
+  const recent = orders.slice(0, 4);
+
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
@@ -24,25 +24,25 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.name}>{merchant.businessName}</Text>
           </View>
           <Pressable style={styles.bell} hitSlop={8}>
-            <Ionicons name="notifications-outline" size={22} color={colors.text} />
+            <Ionicons name="notifications-outline" size={21} color={colors.text} />
           </Pressable>
         </View>
 
-        <LinearGradient
-          colors={[colors.navy, colors.navy2]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.hero}
-        >
+        <View style={styles.hero}>
           <Text style={styles.heroLabel}>Total collected</Text>
           <Text style={styles.heroValue}>{stats.totalCollected}</Text>
+          <View style={styles.heroDivider} />
           <View style={styles.heroRow}>
-            <View style={styles.today}>
-              <Ionicons name="trending-up" size={14} color="#7dd3fc" />
-              <Text style={styles.todayText}>{stats.todayCollected} today</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.heroSmallLabel}>Today's earnings</Text>
+              <Text style={styles.heroSmallValue}>{stats.todayCollected}</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.heroSmallLabel}>Pending payments</Text>
+              <Text style={styles.heroSmallValue}>{stats.pending}</Text>
             </View>
           </View>
-        </LinearGradient>
+        </View>
 
         <View style={styles.actions}>
           {actions.map((a) => (
@@ -59,21 +59,30 @@ export default function HomeScreen({ navigation }) {
           ))}
         </View>
 
-        <View style={styles.statRow}>
-          <StatCard icon="receipt-outline" label="Total orders" value={stats.totalOrders} />
-          <StatCard icon="time-outline" label="Pending" value={stats.pending} />
+        <View style={styles.summaryRow}>
+          <View style={styles.summary}>
+            <Text style={styles.summaryLabel}>Total orders</Text>
+            <Text style={styles.summaryValue}>{stats.totalOrders}</Text>
+          </View>
+          <View style={styles.summary}>
+            <Text style={styles.summaryLabel}>Awaiting payment</Text>
+            <Text style={[styles.summaryValue, { color: colors.warning }]}>{stats.pending}</Text>
+          </View>
         </View>
 
         <View style={styles.sectionHead}>
-          <Text style={styles.section}>Recent orders</Text>
-          <Pressable onPress={() => navigation.navigate("Orders")}>
+          <Text style={styles.section}>Recent transactions</Text>
+          <Pressable onPress={() => navigation.navigate("Orders")} hitSlop={8}>
             <Text style={styles.link}>See all</Text>
           </Pressable>
         </View>
 
-        <View style={{ gap: 10 }}>
-          {orders.slice(0, 4).map((o) => (
-            <OrderRow key={o.id} order={o} />
+        <View style={styles.listCard}>
+          {recent.map((o, i) => (
+            <View key={o.id}>
+              <OrderRow order={o} />
+              {i < recent.length - 1 && <View style={styles.sep} />}
+            </View>
           ))}
         </View>
       </ScrollView>
@@ -86,29 +95,42 @@ const styles = StyleSheet.create({
   scroll: { padding: 20, paddingBottom: 32 },
   top: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 18 },
   hello: { fontSize: 14, color: colors.muted },
-  name: { fontSize: 22, fontWeight: "800", color: colors.text, letterSpacing: -0.4 },
+  name: { fontSize: 21, fontWeight: "800", color: colors.text, letterSpacing: -0.3 },
   bell: {
-    width: 44, height: 44, borderRadius: 14, backgroundColor: "#fff",
+    width: 42, height: 42, borderRadius: 12, backgroundColor: "#fff",
     borderWidth: 1, borderColor: colors.border, alignItems: "center", justifyContent: "center",
   },
-  hero: { borderRadius: 22, padding: 22 },
-  heroLabel: { color: "#b6c2e0", fontSize: 14 },
-  heroValue: { color: "#fff", fontSize: 36, fontWeight: "800", letterSpacing: -1, marginTop: 4 },
-  heroRow: { flexDirection: "row", marginTop: 14 },
-  today: {
-    flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12,
-    paddingVertical: 6, borderRadius: 999, backgroundColor: "rgba(255,255,255,0.1)",
+  hero: { backgroundColor: colors.navy, borderRadius: 16, padding: 20, ...shadow },
+  heroLabel: { color: "#A9B8D3", fontSize: 14 },
+  heroValue: { color: "#fff", fontSize: 34, fontWeight: "800", letterSpacing: -0.8, marginTop: 4 },
+  heroDivider: { height: 1, backgroundColor: "rgba(255,255,255,0.14)", marginVertical: 16 },
+  heroRow: { flexDirection: "row" },
+  heroSmallLabel: { color: "#A9B8D3", fontSize: 12.5 },
+  heroSmallValue: { color: "#fff", fontSize: 18, fontWeight: "700", marginTop: 3 },
+  actions: {
+    flexDirection: "row", justifyContent: "space-between", backgroundColor: "#fff",
+    borderRadius: 16, paddingVertical: 16, paddingHorizontal: 8, marginTop: 16,
+    borderWidth: 1, borderColor: colors.border,
   },
-  todayText: { color: "#fff", fontSize: 13, fontWeight: "600" },
-  actions: { flexDirection: "row", justifyContent: "space-between", marginTop: 22 },
-  action: { alignItems: "center", width: "23%" },
+  action: { alignItems: "center", width: "25%" },
   actionIcon: {
-    width: 56, height: 56, borderRadius: 18, backgroundColor: "#fff", borderWidth: 1,
-    borderColor: colors.border, alignItems: "center", justifyContent: "center",
+    width: 48, height: 48, borderRadius: 14, backgroundColor: colors.tint,
+    alignItems: "center", justifyContent: "center",
   },
   actionLabel: { fontSize: 12.5, fontWeight: "600", color: colors.text, marginTop: 8 },
-  statRow: { flexDirection: "row", gap: 12, marginTop: 22 },
-  sectionHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 26, marginBottom: 12 },
-  section: { fontSize: 18, fontWeight: "800", color: colors.text },
+  summaryRow: { flexDirection: "row", gap: 12, marginTop: 16 },
+  summary: {
+    flex: 1, backgroundColor: "#fff", borderRadius: 16, padding: 16,
+    borderWidth: 1, borderColor: colors.border,
+  },
+  summaryLabel: { fontSize: 13, color: colors.muted },
+  summaryValue: { fontSize: 24, fontWeight: "800", color: colors.text, marginTop: 4, letterSpacing: -0.4 },
+  sectionHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 24, marginBottom: 10 },
+  section: { fontSize: 17, fontWeight: "800", color: colors.text },
   link: { color: colors.brand, fontWeight: "700", fontSize: 14 },
+  listCard: {
+    backgroundColor: "#fff", borderRadius: 16, overflow: "hidden",
+    borderWidth: 1, borderColor: colors.border,
+  },
+  sep: { height: 1, backgroundColor: colors.border, marginLeft: 68 },
 });
