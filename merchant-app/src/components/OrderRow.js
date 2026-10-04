@@ -10,10 +10,10 @@ export default function OrderRow({ order }) {
         <Text style={styles.avatarText}>{initial}</Text>
       </View>
       <View style={{ flex: 1 }}>
-        <Text style={styles.name}>{order.customer}</Text>
-        <Text style={styles.meta}>{order.id} · {order.date}</Text>
+        <Text style={styles.name} numberOfLines={1}>{order.customer}</Text>
+        <Text style={styles.meta} numberOfLines={1}>{order.id} · {order.date}</Text>
       </View>
-      <View style={{ alignItems: "flex-end", gap: 6 }}>
+      <View style={styles.right}>
         <Text style={styles.amount}>{order.amount}</Text>
         <StatusBadge status={order.status} />
       </View>
@@ -22,16 +22,14 @@ export default function OrderRow({ order }) {
 }
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "#fff",
-    padding: 14, borderRadius: 16, borderWidth: 1, borderColor: colors.border,
-  },
+  row: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 14, paddingHorizontal: 16, backgroundColor: "#fff" },
   avatar: {
-    width: 42, height: 42, borderRadius: 21, backgroundColor: "#eef0ff",
+    width: 40, height: 40, borderRadius: 20, backgroundColor: colors.tint,
     alignItems: "center", justifyContent: "center",
   },
-  avatarText: { color: colors.brand, fontWeight: "800", fontSize: 16 },
+  avatarText: { color: colors.brand, fontWeight: "800", fontSize: 15 },
   name: { fontSize: 15, fontWeight: "700", color: colors.text },
-  meta: { fontSize: 12, color: colors.muted, marginTop: 2 },
+  meta: { fontSize: 12.5, color: colors.muted, marginTop: 2 },
+  right: { alignItems: "flex-end", gap: 5 },
   amount: { fontSize: 15, fontWeight: "800", color: colors.text },
 });
