@@ -6,11 +6,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import { usePaymentLinks } from "../context/PaymentLinksContext";
 import { colors } from "../theme/colors";
 
-const makeLink = () => `https://famway.app/pay/${Math.random().toString(36).slice(2, 8)}`;
+const makeCode = () => Math.random().toString(36).slice(2, 8);
 
 export default function CreateLinkScreen({ navigation }) {
+  const { addLink } = usePaymentLinks();
   const [customer, setCustomer] = useState("");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
@@ -25,11 +27,26 @@ export default function CreateLinkScreen({ navigation }) {
       return;
     }
     setError("");
+
+    const code = makeCode();
+    const formattedAmount = Number(amount).toLocaleString("en-IN");
+    const customerName = customer.trim();
+    const desc = description.trim();
+
+    addLink({
+      id: `${Date.now()}`,
+      title: desc || customerName || "Payment Link",
+      amount: `₹${formattedAmount}`,
+      slug: `famway.app/pay/${code}`,
+      status: "active",
+      payments: 0,
+    });
+
     setResult({
-      url: makeLink(),
-      customer: customer.trim() || "Any customer",
-      amount: Number(amount).toLocaleString("en-IN"),
-      description: description.trim(),
+      url: `https://famway.app/pay/${code}`,
+      customer: customerName || "Any customer",
+      amount: formattedAmount,
+      description: desc,
     });
   };
 
@@ -102,7 +119,7 @@ export default function CreateLinkScreen({ navigation }) {
               </View>
               <Text style={styles.successTitle}>Link generated</Text>
               <Text style={styles.successSub}>
-                This is a sample link. Real links will work once the backend is connected.
+                Saved to your Payment Links tab. This is a sample link until the backend is connected.
               </Text>
 
               <View style={styles.summary}>
