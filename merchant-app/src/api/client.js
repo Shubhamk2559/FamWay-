@@ -2,14 +2,27 @@ import { API_BASE_URL } from "../config";
 
 const TIMEOUT_MS = 20000;
 
+let authToken = null;
+let onUnauthorized = null;
+
+export const setAuthToken = (t) => {
+  authToken = t;
+};
+export const setUnauthorizedHandler = (fn) => {
+  onUnauthorized = fn;
+};
+
 export async function request(path, { method = "GET", body } = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
   try {
+    const headers = { "Content-Type": "application/json", Accept: "application/json" };
+    if (authToken) headers.Authorization = `Bearer ${authToken}`;
+
     const res = await fetch(`${API_BASE_URL}${path}`, {
       method,
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers,
       body: body ? JSON.stringify(body) : undefined,
       signal: controller.signal,
     });
@@ -22,7 +35,10 @@ export async function request(path, { method = "GET", body } = {}) {
     }
 
     if (!res.ok || !json || json.success === false) {
-      throw new Error((json && json.message) || `Request failed (${res.status})`);
+      if (res.status === 401 && authToken && onUnauthorized) onUnauthorized();
+      const err = new Error((json && json.message) || `Request failed (${res.status})`);
+      err.status = res.status;
+      throw err;
     }
     return json;
   } catch (err) {
