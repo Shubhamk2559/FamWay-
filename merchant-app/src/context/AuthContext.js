@@ -15,6 +15,7 @@ export function AuthProvider({ children }) {
     setAuthToken(null);
     setToken(null);
     setMerchant(null);
+
     try {
       await SecureStore.deleteItemAsync(KEY);
     } catch (_e) {}
@@ -22,26 +23,39 @@ export function AuthProvider({ children }) {
 
   const save = useCallback(async (t, m) => {
     setAuthToken(t);
+
     try {
       await SecureStore.setItemAsync(KEY, t);
     } catch (_e) {}
+
     setMerchant(m);
     setToken(t);
   }, []);
 
+  const updateMerchant = useCallback((patch) => {
+    setMerchant((m) => (m ? { ...m, ...patch } : m));
+  }, []);
+
   useEffect(() => {
     setUnauthorizedHandler(clear);
+
     (async () => {
       try {
         const saved = await SecureStore.getItemAsync(KEY);
+
         if (saved) {
           setAuthToken(saved);
+
           try {
-            setMerchant(await apiMe());
+            const me = await apiMe();
+            setMerchant(me);
             setToken(saved);
           } catch (e) {
-            if (e.status === 401) await clear();
-            else setToken(saved); // offline: stay signed in
+            if (e.status === 401) {
+              await clear();
+            } else {
+              setToken(saved);
+            }
           }
         }
       } catch (_e) {
@@ -68,15 +82,39 @@ export function AuthProvider({ children }) {
   );
 
   const value = useMemo(
-    () => ({ token, merchant, booting, login, register, logout: clear }),
-    [token, merchant, booting, login, register, clear]
+    () => ({
+      token,
+      merchant,
+      booting,
+      login,
+      register,
+      logout: clear,
+      updateMerchant,
+    }),
+    [
+      token,
+      merchant,
+      booting,
+      login,
+      register,
+      clear,
+      updateMerchant,
+    ]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
+
+  if (!ctx) {
+    throw new Error("useAuth must be used inside AuthProvider");
+  }
+
   return ctx;
 }
