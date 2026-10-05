@@ -1,7 +1,5 @@
 import { request } from "./client";
-import { MERCHANT_ID } from "../config";
 
-// Converts a backend link into the shape the UI already uses.
 function toLink(l) {
   const rupees = l.amount ?? (l.amountPaise || 0) / 100;
   const url = l.url || "";
@@ -17,14 +15,14 @@ function toLink(l) {
 }
 
 export async function fetchPaymentLinks() {
-  const json = await request(`/api/payment-links/${MERCHANT_ID}?limit=100`);
+  const json = await request("/api/payment-links?limit=100");
   return json.data.map(toLink);
 }
 
 export async function createPaymentLink({ amount, description, customerName }) {
   const json = await request("/api/payment-links", {
     method: "POST",
-    body: { merchantId: MERCHANT_ID, amount, description, customerName },
+    body: { amount, description, customerName },
   });
   return toLink(json.data);
 }
