@@ -1,7 +1,8 @@
 const Order = require("../models/Order");
 const AppError = require("../utils/AppError");
 const asyncHandler = require("../utils/asyncHandler");
-const { parsePagination } = require("../utils/helpers");
+const { parsePagination, isObjectId } = require("../utils/helpers");
+const { markOrderPaid } = require("../services/orderService");
 
 // GET /api/orders?status=&page=&limit=
 exports.getOrders = asyncHandler(async (req, res) => {
@@ -28,4 +29,15 @@ exports.getOrders = asyncHandler(async (req, res) => {
     data: items,
     pagination: { page, limit, total, pages: Math.ceil(total / limit) },
   });
+});
+
+// PATCH /api/orders/:id/mark-paid  (manual fallback)
+exports.markPaid = asyncHandler(async (req, res) => {
+  if (!isObjectId(req.params.id)) throw new AppError("Invalid order id", 400);
+  const order = await markOrderPaid(
+    { _id: req.params.id, merchant: req.merchant._id },
+    { via: "manual" }
+  );
+  if (!order) throw new AppError("Order not found or not pending", 404);
+  res.json({ success: true, data: order });
 });
