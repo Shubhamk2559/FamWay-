@@ -2,7 +2,7 @@ import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, dark } from "../theme/colors";
-import { merchant } from "../data/mockData";
+import { useAuth } from "../context/AuthContext";
 
 const sections = [
   {
@@ -26,16 +26,23 @@ const sections = [
   },
 ];
 
-const info = [
-  { label: "Owner", value: merchant.name },
-  { label: "Email", value: merchant.email },
-  { label: "Mobile", value: `+91 ${merchant.phone}` },
-  { label: "UPI ID", value: merchant.upiId },
-];
+export default function ProfileScreen() {
+  const { merchant: me, logout } = useAuth();
 
-export default function ProfileScreen({ navigation }) {
-  const logout = () =>
-    navigation.getParent()?.reset({ index: 0, routes: [{ name: "Login" }] });
+  const merchant = {
+    name: me?.name || "",
+    businessName: me?.businessName || "Merchant",
+    email: me?.email || "",
+    phone: me?.phone || "-",
+    upiId: me?.upiId || "Not added",
+  };
+
+  const info = [
+    { label: "Owner", value: merchant.name },
+    { label: "Email", value: merchant.email },
+    { label: "Mobile", value: merchant.phone === "-" ? "-" : `+91 ${merchant.phone}` },
+    { label: "UPI ID", value: merchant.upiId },
+  ];
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
@@ -44,15 +51,17 @@ export default function ProfileScreen({ navigation }) {
 
         <View style={styles.head}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{merchant.businessName.charAt(0)}</Text>
+            <Text style={styles.avatarText}>{merchant.businessName.charAt(0).toUpperCase()}</Text>
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.biz} numberOfLines={1}>{merchant.businessName}</Text>
             <Text style={styles.sub} numberOfLines={1}>{merchant.email}</Text>
-            <View style={styles.verified}>
-              <Ionicons name="checkmark-circle" size={14} color="#4ADE80" />
-              <Text style={styles.verifiedText}>UPI linked</Text>
-            </View>
+            {me?.upiId ? (
+              <View style={styles.verified}>
+                <Ionicons name="checkmark-circle" size={14} color="#4ADE80" />
+                <Text style={styles.verifiedText}>UPI linked</Text>
+              </View>
+            ) : null}
           </View>
         </View>
 
