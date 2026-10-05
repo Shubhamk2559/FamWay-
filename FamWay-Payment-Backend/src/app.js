@@ -18,7 +18,7 @@ app.use(helmet());
 app.use(
   cors({
     origin: env.corsOrigins.includes("*") ? true : env.corsOrigins,
-    methods: ["GET", "POST", "PATCH", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   })
 );
 
