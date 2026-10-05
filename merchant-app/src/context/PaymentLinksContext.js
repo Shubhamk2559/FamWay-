@@ -1,11 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { fetchPaymentLinks, createPaymentLink } from "../api/paymentLinks";
+import { useAuth } from "./AuthContext";
 
 const PaymentLinksContext = createContext(null);
 
 export function PaymentLinksProvider({ children }) {
+  const { token } = useAuth();
   const [links, setLinks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const refresh = useCallback(async ({ silent = false } = {}) => {
@@ -21,10 +23,15 @@ export function PaymentLinksProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    refresh();
-  }, [refresh]);
+    if (token) {
+      refresh();
+    } else {
+      setLinks([]);
+      setError("");
+      setLoading(false);
+    }
+  }, [token, refresh]);
 
-  // Throws on failure so the calling screen can show the error.
   const createLink = useCallback(
     async (input) => {
       const link = await createPaymentLink(input);
