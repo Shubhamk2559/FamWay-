@@ -1,14 +1,11 @@
 const Order = require("../models/Order");
 const AppError = require("../utils/AppError");
 const asyncHandler = require("../utils/asyncHandler");
-const { isObjectId, parsePagination } = require("../utils/helpers");
+const { parsePagination } = require("../utils/helpers");
 
-// GET /api/orders/:merchantId?status=&page=&limit=
+// GET /api/orders?status=&page=&limit=
 exports.getOrders = asyncHandler(async (req, res) => {
-  const { merchantId } = req.params;
-  if (!isObjectId(merchantId)) throw new AppError("Invalid merchantId", 400);
-
-  const filter = { merchant: merchantId };
+  const filter = { merchant: req.merchant._id };
   if (req.query.status) {
     if (!["created", "pending", "paid", "failed", "expired"].includes(req.query.status)) {
       throw new AppError("Invalid status filter", 400);
