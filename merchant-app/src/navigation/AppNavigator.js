@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import SplashScreen from "../screens/SplashScreen";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import CreateLinkScreen from "../screens/CreateLinkScreen";
+import PaymentSettingsScreen from "../screens/PaymentSettingsScreen";
+
 import MainTabs from "./MainTabs";
 import { useAuth } from "../context/AuthContext";
 
@@ -16,23 +19,54 @@ export default function AppNavigator() {
 
   useEffect(() => {
     const t = setTimeout(() => setMinDone(true), 2000);
+
     return () => clearTimeout(t);
   }, []);
 
-  if (booting || !minDone) return <SplashScreen />;
+  if (booting || !minDone) {
+    return <SplashScreen />;
+  }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false, animation: "slide_from_right" }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          animation: "slide_from_right",
+        }}
+      >
         {token ? (
           <>
-            <Stack.Screen name="Main" component={MainTabs} options={{ animation: "fade", gestureEnabled: false }} />
-            <Stack.Screen name="CreateLink" component={CreateLinkScreen} />
+            <Stack.Screen
+              name="Main"
+              component={MainTabs}
+              options={{
+                animation: "fade",
+                gestureEnabled: false,
+              }}
+            />
+
+            <Stack.Screen
+              name="CreateLink"
+              component={CreateLinkScreen}
+            />
+
+            <Stack.Screen
+              name="PaymentSettings"
+              component={PaymentSettingsScreen}
+            />
           </>
         ) : (
           <>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+            />
+
+            <Stack.Screen
+              name="Register"
+              component={RegisterScreen}
+            />
           </>
         )}
       </Stack.Navigator>
