@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
-import { View, Text, Animated, StyleSheet } from "react-native";
+import { Text, Animated, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Logo from "../components/Logo";
 import { colors } from "../theme/colors";
 
-export default function SplashScreen({ navigation }) {
+export default function SplashScreen() {
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.85)).current;
 
@@ -13,9 +13,6 @@ export default function SplashScreen({ navigation }) {
       Animated.timing(opacity, { toValue: 1, duration: 700, useNativeDriver: true }),
       Animated.spring(scale, { toValue: 1, friction: 6, useNativeDriver: true }),
     ]).start();
-
-    const t = setTimeout(() => navigation.replace("Login"), 2200);
-    return () => clearTimeout(t);
   }, []);
 
   return (
