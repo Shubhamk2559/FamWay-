@@ -4,11 +4,31 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Logo from "../components/Logo";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme/colors";
 
 export default function LoginScreen({ navigation }) {
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const submit = async () => {
+    if (loading) return;
+    if (!email.trim() || !password) {
+      setError("Enter your email and password.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await login(email.trim(), password);
+    } catch (e) {
+      setError(e.message);
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -26,6 +46,7 @@ export default function LoginScreen({ navigation }) {
               keyboardType="email-address"
               value={email}
               onChangeText={setEmail}
+              editable={!loading}
             />
             <Input
               label="Password"
@@ -33,13 +54,12 @@ export default function LoginScreen({ navigation }) {
               secure
               value={password}
               onChangeText={setPassword}
+              editable={!loading}
             />
 
-            <Pressable style={styles.forgot}>
-              <Text style={styles.link}>Forgot password?</Text>
-            </Pressable>
+            {error ? <Text style={styles.error}>{error}</Text> : null}
 
-            <Button title="Login" onPress={() => navigation.replace("Main")} />
+            <Button title="Login" onPress={submit} loading={loading} />
           </View>
 
           <View style={styles.bottom}>
@@ -59,7 +79,7 @@ const styles = StyleSheet.create({
   scroll: { flexGrow: 1, padding: 24, paddingTop: 32 },
   title: { fontSize: 28, fontWeight: "800", color: colors.text, marginTop: 36, letterSpacing: -0.5 },
   sub: { fontSize: 15, color: colors.muted, marginTop: 6 },
-  forgot: { alignSelf: "flex-end", marginBottom: 20, marginTop: -4 },
+  error: { color: colors.danger, fontSize: 13.5, fontWeight: "600", marginBottom: 14 },
   link: { color: colors.brand, fontWeight: "700", fontSize: 14 },
   muted: { color: colors.muted, fontSize: 14 },
   bottom: { flexDirection: "row", justifyContent: "center", marginTop: "auto", paddingTop: 32 },
