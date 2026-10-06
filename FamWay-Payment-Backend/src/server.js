@@ -2,6 +2,7 @@ const env = require("./config/env");
 const connectDB = require("./config/db");
 const app = require("./app");
 const mongoose = require("mongoose");
+const emailWorker = require("./workers/emailWorker");
 
 async function start() {
   await connectDB();
@@ -9,8 +10,11 @@ async function start() {
     console.log(`FamWay backend running on port ${env.port} (${env.nodeEnv})`);
   });
 
+  emailWorker.start();
+
   const shutdown = (signal) => {
     console.log(`${signal} received, shutting down`);
+    emailWorker.stop();
     server.close(async () => {
       await mongoose.connection.close();
       process.exit(0);
