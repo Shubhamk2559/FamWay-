@@ -20,25 +20,18 @@ body::before{content:"";position:fixed;inset:0;opacity:.4;pointer-events:none;z-
 .product-main{padding:28px}
 .gateway-brand{display:flex;align-items:center;gap:10px;margin-bottom:24px}
 .mark{width:28px;height:28px;border-radius:8px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800;font-size:16px}
-.brand-name{font-weight:800;font-size:18px;letter-spacing:-.4px;color:var(--ink)}
+.brand-name{font-weight:800;font-size:18px;letter-spacing:-.4px}
 
 .product-label{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
-.money{margin:0 0 24px;font-size:46px;letter-spacing:-1.5px;font-weight:800;color:var(--ink);line-height:1;word-break:break-all}
+.money{margin:0 0 24px;font-size:46px;letter-spacing:-1.5px;font-weight:800;line-height:1;word-break:break-all}
 .money small{color:var(--muted);font-size:16px;letter-spacing:0;font-weight:600;margin-left:4px}
 
 .pay-card{background:#fff;border:1px solid #dbeafe;padding:20px;border-radius:16px;margin-bottom:24px;box-shadow:0 4px 12px rgba(37,99,235,.04)}
 .note{background:#fef9c3;color:#a16207;border:1px solid #fde68a;border-radius:10px;padding:9px 12px;font-size:12.5px;font-weight:600;margin:-8px 0 16px}
 
-.pay-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:13px;gap:8px}
-.rows .pay-row:first-child{border-top:0;padding-top:0}
-.pay-row>span:first-child{color:var(--muted);font-weight:500;white-space:nowrap;flex-shrink:0}
-.pay-row b{color:var(--ink);font-weight:600;font-size:13px;text-align:right;word-break:break-all}
-.pay-row b.cap{text-transform:capitalize}
-.low{color:var(--bad)!important}
-
-.qr-container{text-align:center;margin-bottom:16px}
+.qr-container{text-align:center;margin-bottom:20px}
 .qr-box-wrap{position:relative;width:170px;height:170px;margin:0 auto;border-radius:12px;overflow:hidden;background:#f8fafc}
-.qr-skeleton{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#f1f5f9;border:1px solid var(--line);border-radius:12px;z-index:1;transition:opacity .25s ease-out;pointer-events:none}
+.qr-skeleton{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#f1f5f9;border:1px solid var(--line);border-radius:12px;z-index:1;transition:opacity .25s ease-out;pointer-events:none}
 .qr-skel-icon{width:32px;height:32px;color:#94a3b8;opacity:.8;animation:pulseIcon 1.5s infinite}
 .qr-image{width:170px;height:170px;border-radius:12px;border:1px solid var(--line);padding:8px;background:#fff;display:block;margin:0 auto;position:relative;z-index:2;opacity:0;transition:opacity .25s ease-in-out}
 .qr-box-wrap.loaded .qr-image{opacity:1}
@@ -50,31 +43,34 @@ body::before{content:"";position:fixed;inset:0;opacity:.4;pointer-events:none;z-
 .btn:disabled{opacity:.6;cursor:default}
 .btn-soft{display:inline-flex;align-items:center;gap:6px;margin-top:12px;background:#eff6ff;color:var(--blue);border:1px solid #bfdbfe;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 .btn-soft svg{width:14px;height:14px}
-.err{color:var(--bad);font-size:13px;font-weight:600;margin-top:10px;text-align:center}
+.err{color:var(--bad);font-size:13px;font-weight:600;margin-top:10px}
 .err:empty{display:none}
+
+.pay-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:13px;gap:8px}
+.rows .pay-row:first-child{border-top:0;padding-top:0}
+.pay-row>span:first-child{color:var(--muted);font-weight:500;white-space:nowrap;flex-shrink:0}
+.pay-row b{font-weight:600;font-size:13px;text-align:right;word-break:break-all}
+.pay-row b.cap{text-transform:capitalize}
+.low{color:var(--bad)}
 
 .status{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--blue-d);background:#eff6ff;padding:5px 10px;border-radius:999px;border:1px solid #bfdbfe;white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis}
 .spinner-pulse{width:8px;height:8px;min-width:8px;background:#3b82f6;border-radius:50%;animation:pulse 1.5s infinite}
 
 .small{color:var(--muted);font-size:13px;text-align:center;padding:20px 0}
-.success-container{position:relative;text-align:center;padding:20px 0 6px}
-.icon{width:68px;height:68px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;font-size:32px;font-weight:700;color:#fff;animation:popScale .4s cubic-bezier(.2,.8,.2,1) forwards}
+.done-box{text-align:center;padding:20px 0 6px}
+.icon{width:68px;height:68px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;font-size:32px;font-weight:700;color:#fff}
 .icon.ok{background:var(--ok)}
 .icon.bad{background:var(--bad)}
-.success-container h1{font-size:20px;letter-spacing:-.3px}
+.done-box h1{font-size:20px;letter-spacing:-.3px}
 .desc{color:var(--muted);font-size:13.5px;margin-top:6px}
-.confetti{position:absolute;left:50%;top:54px;width:0;height:0;pointer-events:none}
-.confetti i{position:absolute;width:7px;height:7px;border-radius:2px;animation:popConfetti 1.2s ease-out forwards}
 
 .checkout-footer{display:flex;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:11.5px;font-weight:500;letter-spacing:.2px;margin-top:-6px}
 .checkout-footer svg{width:12px;height:12px;color:var(--blue)}
 .checkout-footer b{color:var(--ink);font-weight:700}
 
 @keyframes popIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes popScale{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
 @keyframes pulse{0%{transform:scale(.95);box-shadow:0 0 0 0 rgba(59,130,246,.7)}70%{transform:scale(1);box-shadow:0 0 0 6px rgba(59,130,246,0)}100%{transform:scale(.95);box-shadow:0 0 0 0 rgba(59,130,246,0)}}
 @keyframes pulseIcon{0%,100%{opacity:.5}50%{opacity:.9}}
-@keyframes popConfetti{0%{opacity:1;transform:translate(0,0) scale(.5)}80%{opacity:1;transform:translate(var(--tx),var(--ty)) scale(1)}100%{opacity:0;transform:translate(var(--tx),calc(var(--ty) + 20px)) scale(.8)}}
 
 @media (max-width:500px){
   body{padding:12px;padding-top:20px;align-items:flex-start;min-height:auto}
@@ -87,7 +83,7 @@ body::before{content:"";position:fixed;inset:0;opacity:.4;pointer-events:none;z-
   .status{font-size:11.5px;padding:5px 9px;max-width:160px}
 }
 @media (prefers-reduced-motion:reduce){
-  .product,.icon,.spinner-pulse,.qr-skel-icon{animation:none}
+  .product,.spinner-pulse,.qr-skel-icon{animation:none}
 }
 </style></head><body>
 <main class="product">
@@ -96,24 +92,11 @@ body::before{content:"";position:fixed;inset:0;opacity:.4;pointer-events:none;z-
 
   <section id="loading"><p class="small">Loading...</p></section>
 
-  <section id="info" class="hide">
+  <section id="checkout" class="hide">
     <div class="product-label">Order total</div>
-    <div class="money" id="iAmount"></div>
-    <div class="pay-card">
-      <div class="rows">
-        <div class="pay-row"><span>Merchant</span><b class="cap" id="iMerchant"></b></div>
-        <div class="pay-row"><span>For</span><b id="iTitle"></b></div>
-        <div class="pay-row hide" id="iDescRow"><span>Note</span><b id="iDesc"></b></div>
-      </div>
-      <button type="button" class="btn" id="payBtn">Pay now</button>
-      <p class="err" id="iErr"></p>
-    </div>
-  </section>
+    <div class="money" id="amount"></div>
+    <div class="note hide" id="warn">Pay exactly this amount, including paise. Do not change it.</div>
 
-  <section id="pay" class="hide">
-    <div class="product-label">Order total</div>
-    <div class="money" id="pAmount"></div>
-    <div class="note">Pay exactly this amount, including paise. Do not change it.</div>
     <div class="pay-card">
       <div class="qr-container">
         <div class="qr-box-wrap" id="qrWrap">
@@ -125,19 +108,24 @@ body::before{content:"";position:fixed;inset:0;opacity:.4;pointer-events:none;z-
           </div>
           <img class="qr-image" id="pQr" alt="UPI QR code">
         </div>
-        <div class="qr-note">Scan with any UPI app</div>
+        <div class="qr-note" id="qrNote">Tap Pay now to generate QR</div>
+        <button type="button" class="btn" id="payBtn">Pay now</button>
         <a class="btn hide" id="upiBtn">Open UPI app</a>
-        <button type="button" class="btn-soft" id="saveBtn">
+        <button type="button" class="btn-soft hide" id="saveBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           Save QR
         </button>
+        <p class="err" id="iErr"></p>
       </div>
+
       <div class="rows">
-        <div class="pay-row"><span>Merchant</span><b class="cap" id="pMerchant"></b></div>
-        <div class="pay-row"><span>Pay to</span><b id="pUpi"></b></div>
-        <div class="pay-row"><span>Order ID</span><b id="pOrder"></b></div>
-        <div class="pay-row"><span>Expires in</span><b id="pTimer"></b></div>
-        <div class="pay-row"><span>Verification</span>
+        <div class="pay-row"><span>Merchant</span><b class="cap" id="iMerchant"></b></div>
+        <div class="pay-row"><span>For</span><b id="iTitle"></b></div>
+        <div class="pay-row hide" id="iDescRow"><span>Note</span><b id="iDesc"></b></div>
+        <div class="pay-row hide" id="rUpi"><span>Pay to</span><b id="pUpi"></b></div>
+        <div class="pay-row hide" id="rOrder"><span>Order ID</span><b id="pOrder"></b></div>
+        <div class="pay-row hide" id="rTimer"><span>Expires in</span><b id="pTimer"></b></div>
+        <div class="pay-row hide" id="rStatus"><span>Verification</span>
           <span class="status" role="status"><span class="spinner-pulse"></span><span>Waiting for payment...</span></span>
         </div>
       </div>
@@ -145,8 +133,7 @@ body::before{content:"";position:fixed;inset:0;opacity:.4;pointer-events:none;z-
   </section>
 
   <section id="done" class="hide">
-    <div class="success-container">
-      <div class="confetti" id="confetti"></div>
+    <div class="done-box">
       <div class="icon ok" id="dIcon"></div>
       <h1 id="dTitle"></h1>
       <p class="desc" id="dText"></p>
@@ -168,7 +155,7 @@ body::before{content:"";position:fixed;inset:0;opacity:.4;pointer-events:none;z-
   var $ = function(id){ return document.getElementById(id); };
   var order = null, pollT = null, tickT = null;
 
-  function show(id){ ['loading','info','pay','done'].forEach(function(x){ $(x).classList.toggle('hide', x !== id); }); }
+  function show(id){ ['loading','checkout','done'].forEach(function(x){ $(x).classList.toggle('hide', x !== id); }); }
   function api(path, opts){
     return fetch('/api/public' + path, opts).then(function(r){ return r.json().catch(function(){ return {}; }); });
   }
@@ -180,19 +167,6 @@ body::before{content:"";position:fixed;inset:0;opacity:.4;pointer-events:none;z-
     var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60;
     return (h ? h + ':' + ('0' + m).slice(-2) : m) + ':' + ('0' + x).slice(-2);
   }
-  function confetti(){
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var box = $('confetti'), colors = ['#2563eb','#60a5fa','#16a34a','#f59e0b','#ef4444'];
-    for (var i = 0; i < 18; i++) {
-      var p = document.createElement('i');
-      var a = Math.random() * Math.PI * 2, d = 50 + Math.random() * 60;
-      p.style.setProperty('--tx', (Math.cos(a) * d) + 'px');
-      p.style.setProperty('--ty', (Math.sin(a) * d - 30) + 'px');
-      p.style.background = colors[i % colors.length];
-      box.appendChild(p);
-    }
-    setTimeout(function(){ box.textContent = ''; }, 1600);
-  }
   function finish(ok, title, text, retry){
     clearInterval(pollT); clearInterval(tickT);
     try { sessionStorage.removeItem(KEY); } catch(e){}
@@ -203,7 +177,6 @@ body::before{content:"";position:fixed;inset:0;opacity:.4;pointer-events:none;z-
     $('dTitle').textContent = title; $('dText').textContent = text;
     $('retryBtn').classList.toggle('hide', !retry);
     show('done');
-    if (ok) confetti();
   }
   function tick(){
     var s = Math.max(0, Math.floor((new Date(order.expiresAt) - Date.now()) / 1000));
@@ -217,17 +190,23 @@ body::before{content:"";position:fixed;inset:0;opacity:.4;pointer-events:none;z-
       else if (j.data.status !== 'pending') finish(false, 'Payment expired', 'This payment window has closed. If you already paid, contact the merchant.', true);
     }).catch(function(){});
   }
+
+  // Same checkout card: QR skeleton fades out, QR fades in.
   function showPay(){
-    money($('pAmount'), order.payAmount);
-    $('pMerchant').textContent = order.merchantName;
+    money($('amount'), order.payAmount);
+    $('iMerchant').textContent = order.merchantName;
     $('pUpi').textContent = order.upiId;
     $('pOrder').textContent = order.orderNumber;
+    ['rUpi','rOrder','rTimer','rStatus','warn','saveBtn'].forEach(function(id){ $(id).classList.remove('hide'); });
+    $('payBtn').classList.add('hide');
+    $('qrNote').textContent = 'Scan with any UPI app';
     var wrap = $('qrWrap'), img = $('pQr');
     wrap.classList.remove('loaded');
     img.onload = function(){ wrap.classList.add('loaded'); };
     img.src = order.qrDataUrl;
     if (/Android|iPhone|iPad/i.test(navigator.userAgent)) { $('upiBtn').href = order.upiUri; $('upiBtn').classList.remove('hide'); }
-    show('pay'); tick();
+    show('checkout'); tick();
+    clearInterval(tickT); clearInterval(pollT);
     tickT = setInterval(tick, 1000); pollT = setInterval(poll, 5000);
   }
 
@@ -239,26 +218,27 @@ body::before{content:"";position:fixed;inset:0;opacity:.4;pointer-events:none;z-
   };
 
   $('payBtn').onclick = function(){
-    var b = $('payBtn'); b.disabled = true; $('iErr').textContent = '';
+    var b = $('payBtn'); b.disabled = true; b.textContent = 'Generating QR...'; $('iErr').textContent = '';
     api('/links/' + encodeURIComponent(slug) + '/orders', { method: 'POST' }).then(function(j){
-      if (!j.success) { $('iErr').textContent = j.message || 'Could not start payment.'; b.disabled = false; return; }
+      if (!j.success) { $('iErr').textContent = j.message || 'Could not start payment.'; b.disabled = false; b.textContent = 'Pay now'; return; }
       order = j.data;
       try { sessionStorage.setItem(KEY, JSON.stringify(order)); } catch(e){}
       showPay();
-    }).catch(function(){ $('iErr').textContent = 'Network error. Try again.'; b.disabled = false; });
+    }).catch(function(){ $('iErr').textContent = 'Network error. Try again.'; b.disabled = false; b.textContent = 'Pay now'; });
   };
   $('retryBtn').onclick = function(){ location.reload(); };
 
-  function loadInfo(){
+  function loadInfo(cb){
     api('/links/' + encodeURIComponent(slug)).then(function(j){
       if (!j.success) return finish(false, 'Link not found', j.message || 'This payment link does not exist.', false);
       var d = j.data;
-      money($('iAmount'), d.amount);
+      money($('amount'), d.amount);
       $('iMerchant').textContent = d.merchantName;
       $('iTitle').textContent = d.title;
       if (d.description) { $('iDesc').textContent = d.description; $('iDescRow').classList.remove('hide'); }
-      if (!d.payable) { $('payBtn').classList.add('hide'); $('iErr').textContent = d.reason; }
-      show('info');
+      if (!d.payable) { $('payBtn').classList.add('hide'); $('qrNote').textContent = ''; $('iErr').textContent = d.reason; }
+      show('checkout');
+      if (cb) cb();
     }).catch(function(){ finish(false, 'Connection problem', 'Check your internet and reload.', false); });
   }
 
@@ -267,10 +247,10 @@ body::before{content:"";position:fixed;inset:0;opacity:.4;pointer-events:none;z-
   if (saved && new Date(saved.expiresAt) > new Date()) {
     order = saved;
     api('/orders/' + encodeURIComponent(order.orderId) + '/status').then(function(j){
-      if (j.success && j.data.status === 'pending') showPay();
+      if (j.success && j.data.status === 'pending') loadInfo(showPay);
       else if (j.success && j.data.status === 'paid') finish(true, 'Payment received', 'Rs. ' + j.data.payAmount + ' paid. You can close this page.', false);
       else { try { sessionStorage.removeItem(KEY); } catch(e){} loadInfo(); }
-    }).catch(loadInfo);
+    }).catch(function(){ loadInfo(); });
   } else { loadInfo(); }
 })();
 </script></body></html>`;
