@@ -1,0 +1,16 @@
+export const auth = {
+  bg: "#000000",
+  text: "#FFFFFF",
+  muted: "#8E8E93",
+  line: "#2A2A2E",
+  field: "#212124",
+  fieldBorder: "#3A3A3F",
+  fieldFocus: "#6B6B72",
+  segBg: "#2B2B30",
+  segBorder: "#3A3A3F",
+  btnOff: "#3A3B41",
+  btnOffText: "#80818A",
+  social: "#2A2A2E",
+  brand: "#F20136",
+  error: "#FF6B6B",
+};
