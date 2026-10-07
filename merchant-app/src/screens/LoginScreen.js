@@ -1,18 +1,19 @@
 import { useState } from "react";
-import { Keyboard, Pressable } from "react-native";
+import { Keyboard, Pressable, Text, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import {
   AuthScreen, Segmented, Field, PhoneField, PrimaryButton, Divider, SocialButtons,
   ErrorText, COUNTRIES, comingSoon,
 } from "../components/auth/AuthKit";
+import { auth } from "../theme/authTheme";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function LoginScreen({ navigation }) {
   const { login } = useAuth();
   const [tab, setTab] = useState("email");
-  const [step, setStep] = useState("email"); // email -> password
+  const [step, setStep] = useState("email");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState(COUNTRIES[0]);
@@ -46,16 +47,18 @@ export default function LoginScreen({ navigation }) {
     return (
       <AuthScreen
         back
-        title="Enter password"
-        subtitle={email.trim()}
+        plain
+        title="Enter your password"
+        subtitle={
+          <Text style={styles.sub}>
+            Log in as <Text style={styles.subEm}>{email.trim()}</Text>
+          </Text>
+        }
         onClose={() => { setStep("email"); setPassword(""); setError(""); }}
-        footerText="Don't have an account?"
-        footerLink="Sign up"
-        onFooterPress={goSignup}
       >
         <Field
-          style={{ marginTop: 34 }}
-          label="Password"
+          variant="black"
+          style={{ marginTop: 36 }}
           value={password}
           onChangeText={setPassword}
           secureTextEntry={!showPw}
@@ -64,18 +67,12 @@ export default function LoginScreen({ navigation }) {
           onSubmitEditing={submit}
           right={
             <Pressable onPress={() => setShowPw((v) => !v)} hitSlop={10}>
-              <Feather name={showPw ? "eye-off" : "eye"} size={20} color="#9A9AA1" />
+              <Feather name={showPw ? "eye" : "eye-off"} size={22} color="#9A9AA1" />
             </Pressable>
           }
         />
         <ErrorText>{error}</ErrorText>
-        <PrimaryButton
-          style={{ marginTop: 36 }}
-          title="Log in"
-          disabled={!password}
-          loading={loading}
-          onPress={submit}
-        />
+        <PrimaryButton style={{ marginTop: 28 }} title="Log in" disabled={!password} loading={loading} onPress={submit} />
       </AuthScreen>
     );
   }
@@ -122,3 +119,8 @@ export default function LoginScreen({ navigation }) {
     </AuthScreen>
   );
 }
+
+const styles = StyleSheet.create({
+  sub: { color: auth.muted, fontSize: 14, marginTop: 8 },
+  subEm: { color: auth.text },
+});
