@@ -1,33 +1,28 @@
 import { useEffect, useRef } from "react";
-import { Text, Animated, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import Logo from "../components/Logo";
-import { colors } from "../theme/colors";
+import { View, Animated, StyleSheet } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { auth } from "../theme/authTheme";
 
 export default function SplashScreen() {
   const opacity = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0.85)).current;
 
   useEffect(() => {
-    Animated.parallel([
-      Animated.timing(opacity, { toValue: 1, duration: 700, useNativeDriver: true }),
-      Animated.spring(scale, { toValue: 1, friction: 6, useNativeDriver: true }),
-    ]).start();
+    Animated.timing(opacity, { toValue: 1, duration: 600, useNativeDriver: true }).start();
   }, []);
 
   return (
-    <LinearGradient colors={[colors.navy, colors.navy2]} style={styles.container}>
-      <Animated.View style={{ opacity, transform: [{ scale }], alignItems: "center" }}>
-        <Logo size={72} light />
-        <Text style={styles.tag}>Merchant App</Text>
-      </Animated.View>
-      <Text style={styles.footer}>Simple, trusted payment collection</Text>
-    </LinearGradient>
+    <View style={styles.container}>
+      <StatusBar style="light" />
+      <Animated.Image
+        source={require("../../assets/logo-wordmark.png")}
+        style={[styles.logo, { opacity }]}
+        resizeMode="contain"
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center" },
-  tag: { marginTop: 14, color: "#7dd3fc", fontSize: 14, fontWeight: "600", letterSpacing: 2, textTransform: "uppercase" },
-  footer: { position: "absolute", bottom: 48, color: "#b6c2e0", fontSize: 13 },
+  container: { flex: 1, backgroundColor: auth.bg, alignItems: "center", justifyContent: "center" },
+  logo: { width: 200, aspectRatio: 3.3058 },
 });
