@@ -1,25 +1,37 @@
 import { useState } from "react";
-import { View, Text, ScrollView, KeyboardAvoidingView, Platform, Pressable, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Logo from "../components/Logo";
-import Input from "../components/Input";
-import Button from "../components/Button";
+import { Keyboard, Pressable } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
-import { colors } from "../theme/colors";
+import {
+  AuthScreen, Segmented, Field, PhoneField, PrimaryButton, Divider, SocialButtons,
+  ErrorText, COUNTRIES, comingSoon,
+} from "../components/auth/AuthKit";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function LoginScreen({ navigation }) {
   const { login } = useAuth();
+  const [tab, setTab] = useState("email");
+  const [step, setStep] = useState("email"); // email -> password
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState(COUNTRIES[0]);
   const [password, setPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const canNext = tab === "email" ? EMAIL_RE.test(email.trim()) : phone.length >= 6;
+  const goSignup = () => navigation.navigate("Register");
+
+  const next = () => {
+    if (tab === "phone") return comingSoon("Phone login");
+    setError("");
+    setStep("password");
+  };
+
   const submit = async () => {
-    if (loading) return;
-    if (!email.trim() || !password) {
-      setError("Enter your email and password.");
-      return;
-    }
+    if (loading || !password) return;
     setError("");
     setLoading(true);
     try {
@@ -30,57 +42,83 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
-  return (
-    <SafeAreaView style={styles.safe}>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <Logo size={44} />
-
-          <Text style={styles.title}>Welcome back</Text>
-          <Text style={styles.sub}>Log in to manage your payment links and orders.</Text>
-
-          <View style={{ marginTop: 28 }}>
-            <Input
-              label="Email"
-              placeholder="you@business.com"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
-              editable={!loading}
-            />
-            <Input
-              label="Password"
-              placeholder="Enter your password"
-              secure
-              value={password}
-              onChangeText={setPassword}
-              editable={!loading}
-            />
-
-            {error ? <Text style={styles.error}>{error}</Text> : null}
-
-            <Button title="Login" onPress={submit} loading={loading} />
-          </View>
-
-          <View style={styles.bottom}>
-            <Text style={styles.muted}>New to FamWay? </Text>
-            <Pressable onPress={() => navigation.navigate("Register")}>
-              <Text style={styles.link}>Create account</Text>
+  if (step === "password") {
+    return (
+      <AuthScreen
+        back
+        title="Enter password"
+        subtitle={email.trim()}
+        onClose={() => { setStep("email"); setPassword(""); setError(""); }}
+        footerText="Don't have an account?"
+        footerLink="Sign up"
+        onFooterPress={goSignup}
+      >
+        <Field
+          style={{ marginTop: 34 }}
+          label="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!showPw}
+          autoFocus
+          editable={!loading}
+          onSubmitEditing={submit}
+          right={
+            <Pressable onPress={() => setShowPw((v) => !v)} hitSlop={10}>
+              <Feather name={showPw ? "eye-off" : "eye"} size={20} color="#9A9AA1" />
             </Pressable>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          }
+        />
+        <ErrorText>{error}</ErrorText>
+        <PrimaryButton
+          style={{ marginTop: 36 }}
+          title="Log in"
+          disabled={!password}
+          loading={loading}
+          onPress={submit}
+        />
+      </AuthScreen>
+    );
+  }
+
+  return (
+    <AuthScreen
+      showHelp
+      closeInset={5}
+      title="Log in"
+      onClose={Keyboard.dismiss}
+      footerText="Don't have an account?"
+      footerLink="Sign up"
+      onFooterPress={goSignup}
+    >
+      <Segmented
+        options={[{ label: "Email", value: "email" }, { label: "Phone", value: "phone" }]}
+        value={tab}
+        onChange={setTab}
+      />
+
+      {tab === "email" ? (
+        <Field
+          style={{ marginTop: 28 }}
+          label="Email address"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          onSubmitEditing={() => canNext && next()}
+        />
+      ) : (
+        <PhoneField
+          style={{ marginTop: 28 }}
+          label="Phone"
+          country={country}
+          onCountry={setCountry}
+          value={phone}
+          onChangeText={setPhone}
+        />
+      )}
+
+      <PrimaryButton style={{ marginTop: 36 }} title="Next" disabled={!canNext} onPress={next} />
+      <Divider />
+      <SocialButtons onPress={comingSoon} />
+    </AuthScreen>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
-  scroll: { flexGrow: 1, padding: 24, paddingTop: 32 },
-  title: { fontSize: 28, fontWeight: "800", color: colors.text, marginTop: 36, letterSpacing: -0.5 },
-  sub: { fontSize: 15, color: colors.muted, marginTop: 6 },
-  error: { color: colors.danger, fontSize: 13.5, fontWeight: "600", marginBottom: 14 },
-  link: { color: colors.brand, fontWeight: "700", fontSize: 14 },
-  muted: { color: colors.muted, fontSize: 14 },
-  bottom: { flexDirection: "row", justifyContent: "center", marginTop: "auto", paddingTop: 32 },
-});
