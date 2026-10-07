@@ -1,46 +1,32 @@
 import { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ActivityIndicator,
-  StyleSheet,
+  View, Text, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator, StyleSheet,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
-
-import Input from "../components/Input";
-import Button from "../components/Button";
+import { Screen, TopBar, PageTitle } from "../components/ui/UIKit";
+import { Field, PrimaryButton, ErrorText } from "../components/auth/AuthKit";
 import { fetchPaymentSettings, savePaymentSettings } from "../api/settings";
 import { useAuth } from "../context/AuthContext";
-import { colors, dark } from "../theme/colors";
+import { auth as t } from "../theme/authTheme";
 
 export default function PaymentSettingsScreen({ navigation }) {
   const { updateMerchant } = useAuth();
-
   const [upiId, setUpiId] = useState("");
   const [gmail, setGmail] = useState("");
   const [password, setPassword] = useState("");
   const [hasPassword, setHasPassword] = useState(false);
-
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
-        const data = await fetchPaymentSettings();
-
-        setUpiId(data.upiId || "");
-        setGmail(data.gmailAddress || "");
-        setHasPassword(data.hasAppPassword);
+        const x = await fetchPaymentSettings();
+        setUpiId(x.upiId);
+        setGmail(x.gmailAddress);
+        setHasPassword(x.hasAppPassword);
       } catch (e) {
         setError(e.message);
       } finally {
@@ -51,26 +37,14 @@ export default function PaymentSettingsScreen({ navigation }) {
 
   const save = async () => {
     if (saving) return;
-
     setError("");
     setSaved(false);
     setSaving(true);
-
     try {
-      const data = await savePaymentSettings({
-        upiId: upiId.trim(),
-        gmailAddress: gmail.trim(),
-        appPassword: password,
-      });
-
-      setHasPassword(data.hasAppPassword);
+      const x = await savePaymentSettings({ upiId: upiId.trim(), gmailAddress: gmail.trim(), appPassword: password });
+      setHasPassword(x.hasAppPassword);
       setPassword("");
-
-      updateMerchant({
-        upiId: data.upiId,
-        gmailAddress: data.gmailAddress,
-      });
-
+      updateMerchant({ upiId: x.upiId, gmailAddress: x.gmailAddress });
       setSaved(true);
     } catch (e) {
       setError(e.message);
@@ -80,172 +54,56 @@ export default function PaymentSettingsScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <StatusBar style="light" />
-
-      <View style={styles.header}>
-        <Pressable onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={28} color={dark.text} />
-        </Pressable>
-
-        <Text style={styles.title}>Payment Settings</Text>
-
-        <View style={{ width: 28 }} />
-      </View>
-
-
+    <Screen bottom>
+      <TopBar onBack={() => navigation.goBack()} />
       {loading ? (
-        <View style={styles.center}>
-          <ActivityIndicator size="large" color={colors.brand} />
+        <View style={s.center}>
+          <ActivityIndicator color="#fff" size="large" />
         </View>
       ) : (
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+          <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+            <PageTitle style={{ marginTop: 22 }}>Payment settings</PageTitle>
 
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-
-          <ScrollView
-            contentContainerStyle={styles.container}
-            keyboardShouldPersistTaps="handled"
-          >
-
-            <View style={styles.card}>
-
-              <Text style={styles.heading}>
-                Payment account
+            <View style={s.note}>
+              <Ionicons name="shield-checkmark" size={20} color="#C7C7CC" />
+              <Text style={s.noteText}>
+                Use a separate Gmail made only for FamPay payment emails. Never use your personal Gmail. Your app
+                password is stored encrypted.
               </Text>
-
-              <Input
-                label="UPI ID"
-                placeholder="yourname@fam"
-                value={upiId}
-                onChangeText={setUpiId}
-                editable={!saving}
-              />
-
-
-              <Input
-                label="Gmail Address"
-                placeholder="your@gmail.com"
-                keyboardType="email-address"
-                value={gmail}
-                onChangeText={setGmail}
-                editable={!saving}
-              />
-
-
-              <Input
-                label="Gmail App Password"
-                placeholder={
-                  hasPassword
-                    ? "Saved (leave blank to keep)"
-                    : "16 character app password"
-                }
-                secure
-                value={password}
-                onChangeText={setPassword}
-                editable={!saving}
-              />
-
-
-              {error ? (
-                <Text style={styles.error}>{error}</Text>
-              ) : null}
-
-
-              {saved ? (
-                <Text style={styles.success}>
-                  Saved successfully
-                </Text>
-              ) : null}
-
-
-              <Button
-                title="Save Settings"
-                onPress={save}
-                loading={saving}
-              />
-
             </View>
 
+            <Field style={{ marginTop: 26 }} label="FamPay UPI ID" placeholder="yourname@fam" value={upiId} onChangeText={setUpiId} editable={!saving} />
+            <Field style={{ marginTop: 18 }} label="Gmail linked with FamPay" placeholder="yourname@gmail.com" keyboardType="email-address" value={gmail} onChangeText={setGmail} editable={!saving} />
+            <Field
+              style={{ marginTop: 18 }}
+              label="Gmail app password"
+              placeholder={hasPassword ? "Saved. Leave blank to keep" : "16-letter app password"}
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+              editable={!saving}
+            />
 
-            <Text style={styles.note}>
-              Gmail app password is stored encrypted. Normal Gmail password
-              should never be used.
+            <ErrorText>{error}</ErrorText>
+            {saved ? <Text style={s.ok}>Saved successfully.</Text> : null}
+            <PrimaryButton style={{ marginTop: 26 }} title="Save settings" loading={saving} onPress={save} />
+
+            <Text style={s.help}>
+              To get an app password: Google Account, Security, turn on 2-Step Verification, then search "App passwords".
             </Text>
-
-
           </ScrollView>
-
         </KeyboardAvoidingView>
       )}
-
-    </SafeAreaView>
+    </Screen>
   );
 }
 
-
-const styles = StyleSheet.create({
-
-  safe:{
-    flex:1,
-    backgroundColor:dark.bg,
-  },
-
-  header:{
-    flexDirection:"row",
-    justifyContent:"space-between",
-    alignItems:"center",
-    padding:20,
-  },
-
-  title:{
-    color:dark.text,
-    fontSize:18,
-    fontWeight:"800",
-  },
-
-  container:{
-    padding:20,
-  },
-
-  card:{
-    backgroundColor:"#fff",
-    borderRadius:18,
-    padding:20,
-  },
-
-  heading:{
-    fontSize:17,
-    fontWeight:"800",
-    marginBottom:18,
-    color:colors.text,
-  },
-
-  error:{
-    color:colors.danger,
-    marginBottom:12,
-    fontWeight:"600",
-  },
-
-  success:{
-    color:colors.success,
-    marginBottom:12,
-    fontWeight:"700",
-  },
-
-  note:{
-    color:dark.sub,
-    textAlign:"center",
-    marginTop:20,
-    fontSize:13,
-  },
-
-  center:{
-    flex:1,
-    justifyContent:"center",
-    alignItems:"center",
-  },
-
+const s = StyleSheet.create({
+  center: { flex: 1, alignItems: "center", justifyContent: "center" },
+  scroll: { paddingHorizontal: 18, paddingBottom: 30 },
+  note: { flexDirection: "row", gap: 12, backgroundColor: t.card, borderRadius: 16, padding: 16, marginTop: 22 },
+  noteText: { flex: 1, color: t.muted, fontSize: 13.5, lineHeight: 20 },
+  ok: { color: t.green, fontSize: 14, fontWeight: "600", marginTop: 12 },
+  help: { color: t.muted, fontSize: 13, lineHeight: 19, textAlign: "center", marginTop: 22 },
 });
